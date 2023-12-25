@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/christiangda/go-concurrent-service-template/internal/multi_file"
 	"github.com/christiangda/go-concurrent-service-template/internal/single_file"
 )
 
@@ -13,6 +14,7 @@ var (
 
 	examples = map[string]func(){
 		"single_file": single_file.Run,
+		"multi_file":  multi_file.Run,
 	}
 
 	target string

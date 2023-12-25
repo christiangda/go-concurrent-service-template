@@ -1,10 +1,14 @@
-package single_file
+package multi_file
 
 import (
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/christiangda/go-concurrent-service-template/internal/multi_file/service1"
+	"github.com/christiangda/go-concurrent-service-template/internal/multi_file/service2"
+	"github.com/christiangda/go-concurrent-service-template/internal/multi_file/service3"
 )
 
 // this is like a main function
@@ -44,36 +48,21 @@ func Run() {
 	}()
 
 	// start service 1 in a separate goroutine
-	slog.Info("Starting service 1...")
-	go func() {
-		// do something here for long running tasks
-		// like a gRPC server
-
-		<-stopCh
-		slog.Info("Stopping service 1...")
-	}()
+	service1 := service1.NewServer1()
+	go service1.Start()
 
 	// start service 2 in a separate goroutine
-	slog.Info("Starting service 2...")
-	go func() {
-		// do something here for long running tasks
-		// like a http server
-
-		<-stopCh
-		slog.Info("Stopping service 2...")
-	}()
+	service2 := service2.NewServer2()
+	go service2.Start()
 
 	// start service 3 in a separate goroutine
-	slog.Info("Starting service 3...")
-	go func() {
-		// do something here for long running tasks
-		// like a TCP server
-
-		<-stopCh
-		slog.Info("Stopping service 3...")
-	}()
+	service3 := service3.NewServer3()
+	go service3.Start()
 
 	// wait for stop signal
 	slog.Info("Server started.")
 	<-stopCh
+	service1.Stop()
+	service2.Stop()
+	service3.Stop()
 }
