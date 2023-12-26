@@ -11,7 +11,7 @@ import (
 	"github.com/christiangda/go-concurrent-service-template/internal/multi_file/service3"
 )
 
-// this is like a main function
+// this simulates the main() function
 func Run() {
 	slog.Info("starting server...")
 
@@ -67,13 +67,13 @@ func Run() {
 	service3 := service3.NewServer3()
 	go service3.Start()
 
-	// blocked to wait until all services are started
+	// blocked main to wait until all services are started
 	service1.WaitStart()
 	service2.WaitStart()
 	service3.WaitStart()
 	slog.Info("...server started")
 
-	// blocked to wait for stop the server
+	// blocked main to wait for stop the server
 	<-serverStopCh
 
 	// notify the services to stop
@@ -81,7 +81,7 @@ func Run() {
 	go service2.Stop()
 	go service3.Stop()
 
-	// blocked to wait for stop each service
+	// blocked main to wait for stop each service
 	service1.WaitStop()
 	service2.WaitStop()
 	service3.WaitStop()

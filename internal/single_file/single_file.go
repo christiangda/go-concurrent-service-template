@@ -163,5 +163,6 @@ func Run() {
 	<-s2WaitStopCh
 	<-s3WaitStopCh
 
+	// all channels are closed (released), the server is stopped
 	slog.Warn("...server stopped")
 }
