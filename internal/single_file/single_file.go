@@ -48,11 +48,8 @@ func Run() {
 				switch sig {
 				case os.Interrupt, syscall.SIGINT, syscall.SIGTERM:
 					slog.Info("stopping server...")
-					go close(s1StopCh)
-					go close(s2StopCh)
-					go close(s3StopCh)
-
 					close(serverStopCh)
+
 					return
 				case syscall.SIGHUP:
 					slog.Info("reloading configuration...")
@@ -147,18 +144,24 @@ func Run() {
 		close(s3WaitStopCh)
 	}()
 
-	// blocked to wait until all services are started
+	// blocked main to wait until all services are started
 	<-s1WaitStartCh
 	<-s2WaitStartCh
 	<-s3WaitStartCh
 	slog.Info("...server started")
 
-	// blocked to wait for stop each service
+	// blocked main to wait for stop the server
+	<-serverStopCh
+
+	// notify the services to stop
+	go close(s1StopCh)
+	go close(s2StopCh)
+	go close(s3StopCh)
+
+	// blocked main to wait for stop each service
 	<-s1WaitStopCh
 	<-s2WaitStopCh
 	<-s3WaitStopCh
 
-	// blocked to wait for stop the server
-	<-serverStopCh
 	slog.Warn("...server stopped")
 }

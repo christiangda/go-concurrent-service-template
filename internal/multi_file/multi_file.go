@@ -13,7 +13,7 @@ import (
 
 // this is like a main function
 func Run() {
-	slog.Info("Starting server...")
+	slog.Info("starting server...")
 
 	// create a channel to listen for os signals
 	osSigCh := make(chan os.Signal, 1)
@@ -21,27 +21,35 @@ func Run() {
 
 	// used to stop the server and their services
 	// once a signal is received from the os
-	// the stopCh channel will be closed and this will
+	// the serverStopCh channel will be closed and this will
 	// trigger the stop of the server and their services
-	stopCh := make(chan struct{})
+	serverStopCh := make(chan struct{})
 
-	// listen for os signals in a separate goroutine
+	// this is the main logic of the server
+	// it will listen for OS signals and stop the services and the server
+	// when a signal is received
 	go func() {
 		for {
 			select {
 			case sig := <-osSigCh:
-				slog.Info("Received signal", "signal", sig)
+				slog.Info("received OS signal", "type", sig)
 
 				switch sig {
 				case os.Interrupt, syscall.SIGINT, syscall.SIGTERM:
-					slog.Info("Stopping server...")
-					close(stopCh)
+					slog.Info("stopping server...")
+					close(serverStopCh)
+
 					return
 				case syscall.SIGHUP:
-					slog.Info("Reloading configuration...")
+					slog.Info("reloading configuration...")
+					// do something here to reload the configuration
+
 					return
 				}
-			case <-stopCh:
+
+			// if the stopCh channel is closed, the server is stopped
+			// exit from the goroutine
+			case <-serverStopCh:
 				return
 			}
 		}
@@ -59,10 +67,24 @@ func Run() {
 	service3 := service3.NewServer3()
 	go service3.Start()
 
-	// wait for stop signal
-	slog.Info("Server started.")
-	<-stopCh
-	service1.Stop()
-	service2.Stop()
-	service3.Stop()
+	// blocked to wait until all services are started
+	service1.WaitStart()
+	service2.WaitStart()
+	service3.WaitStart()
+	slog.Info("...server started")
+
+	// blocked to wait for stop the server
+	<-serverStopCh
+
+	// notify the services to stop
+	go service1.Stop()
+	go service2.Stop()
+	go service3.Stop()
+
+	// blocked to wait for stop each service
+	service1.WaitStop()
+	service2.WaitStop()
+	service3.WaitStop()
+
+	slog.Info("...server stopped")
 }

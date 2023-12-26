@@ -1,28 +1,58 @@
 package service1
 
-import "log/slog"
+import (
+	"log/slog"
+	"math/rand"
+	"time"
+)
 
 type Server1 struct {
-	stopCh chan struct{}
+	stopCh      chan struct{}
+	waitStopCh  chan struct{}
+	waitStartCh chan struct{}
 }
 
 func NewServer1() *Server1 {
 	return &Server1{
-		stopCh: make(chan struct{}),
+		stopCh:      make(chan struct{}),
+		waitStopCh:  make(chan struct{}),
+		waitStartCh: make(chan struct{}),
 	}
 }
 
 func (s *Server1) Start() {
+	slog.Info("starting service...", "service", "1")
+	// simulate the provisioning of the service
+	time.Sleep(time.Duration(rand.Intn(3)) * time.Second)
+	slog.Info("...service started", "service", "1")
+
+	// closing the channel will notify the server that the service is started
+	close(s.waitStartCh)
+
 	// do something here for long running tasks
 	// like a gRPC server
-	slog.Info("Starting service 1...")
 
+	// blocked to wait until channel is closed to stop the service
 	<-s.stopCh
+
+	// close the channel to notify the server that the service is stopped
+	close(s.waitStopCh)
 }
 
 func (s *Server1) Stop() {
-	// do something here to stop the service
-	slog.Info("Stopping service 1...")
+	slog.Warn("stopping services...", "service", "1")
+
+	// simulate the time spent to stop gracefully shutdown the service
+	time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
+	slog.Warn("...service stopped", "service", "1")
 
 	close(s.stopCh)
+}
+
+func (s *Server1) WaitStart() {
+	<-s.waitStartCh
+}
+
+func (s *Server1) WaitStop() {
+	<-s.waitStopCh
 }
