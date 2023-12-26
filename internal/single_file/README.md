@@ -1,6 +1,12 @@
 # single_file
 
-This is a single file project.
+This is an example of how to use go channels to block and unblock a services.
+
+Characteristics of this example:
+
++ services are started and stopped randomly.
++ services are started in background and then the main go routine waits until services are started.
++ main go routine then waits for the services to stop.
 
 ## Instructions
 
