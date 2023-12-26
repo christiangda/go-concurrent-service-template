@@ -13,7 +13,7 @@ import (
 func Run() {
 	slog.Info("starting server...")
 
-	// create a channel to listen for os signals
+	// create a channel to listen for Operating System (OS) signals
 	osSigCh := make(chan os.Signal, 1)
 	signal.Notify(osSigCh, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
@@ -36,7 +36,9 @@ func Run() {
 	s3WaitStopCh := make(chan struct{})
 	s3WaitStartCh := make(chan struct{})
 
-	// listen for os signals in a separate goroutine
+	// this is the main logic of the server
+	// it will listen for OS signals and stop the services and the server
+	// when a signal is received
 	go func() {
 		for {
 			select {
@@ -54,6 +56,8 @@ func Run() {
 					return
 				case syscall.SIGHUP:
 					slog.Info("reloading configuration...")
+					// do something here to reload the configuration
+
 					return
 				}
 
@@ -78,11 +82,12 @@ func Run() {
 		// do something here for long running tasks
 		// like a gRPC server
 
-		// wait until channel is closed to stop the service
+		// blocked to wait until channel is closed to stop the service
 		<-s1StopCh
 
 		slog.Warn("stopping services...", "service", "1")
-		// simulate the stop of the service
+
+		// simulate the time spent to stop gracefully shutdown the service
 		time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
 		slog.Warn("...service stopped", "service", "1")
 
@@ -103,11 +108,12 @@ func Run() {
 		// do something here for long running tasks
 		// like a http server
 
-		// wait until channel is closed to stop the service
+		// blocked to wait until channel is closed to stop the service
 		<-s2StopCh
 
 		slog.Warn("stopping services...", "service", "2")
-		// simulate the stop of the service
+
+		// simulate the time spent to stop gracefully shutdown the service
 		time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
 		slog.Warn("...service stopped", "service", "2")
 
@@ -128,11 +134,12 @@ func Run() {
 		// do something here for long running tasks
 		// like a TCP server
 
-		// wait until channel is closed to stop the service
+		// blocked to wait until channel is closed to stop the service
 		<-s3StopCh
 
 		slog.Warn("stopping services...", "service", "3")
-		// simulate the stop of the service
+
+		// simulate the time spent to stop gracefully shutdown the service
 		time.Sleep(time.Duration(rand.Intn(2)) * time.Second)
 		slog.Warn("...service stopped", "service", "3")
 
@@ -140,18 +147,18 @@ func Run() {
 		close(s3WaitStopCh)
 	}()
 
-	// block to wait until all services are started
+	// blocked to wait until all services are started
 	<-s1WaitStartCh
 	<-s2WaitStartCh
 	<-s3WaitStartCh
 	slog.Info("...server started")
 
-	// block to wait for stop each service
+	// blocked to wait for stop each service
 	<-s1WaitStopCh
 	<-s2WaitStopCh
 	<-s3WaitStopCh
 
-	// block to wait for stop the server
+	// blocked to wait for stop the server
 	<-serverStopCh
 	slog.Warn("...server stopped")
 }
