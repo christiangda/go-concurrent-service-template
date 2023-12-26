@@ -13,7 +13,7 @@ go run main.go -list
 Run service by name
 
 ```bash
-go run main.go -run service_name
+go run main.go -run <service_name>
 ```
 
 ## build
@@ -21,6 +21,8 @@ go run main.go -run service_name
 ```bash
 make build
 ```
+
+binary file will be generated in `build` folder
 
 ## License
 

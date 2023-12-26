@@ -40,7 +40,7 @@ func main() {
 	}
 
 	if fs.Lookup("list").Value.String() == "true" {
-		fmt.Printf("Available examples name:\n")
+		fmt.Printf("Available examples:\n")
 		for k := range examples {
 			fmt.Printf("  - %s\n", k)
 		}
