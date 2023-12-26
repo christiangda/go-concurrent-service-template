@@ -86,5 +86,6 @@ func Run() {
 	service2.WaitStop()
 	service3.WaitStop()
 
+	// all channels are closed (released), the server is stopped
 	slog.Info("...server stopped")
 }
