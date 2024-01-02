@@ -1,6 +1,17 @@
 # go-concurrent-service-template
 
-This is an example of Golang multi server services using concurrency
+This is an example how to use Golang (go) `goroutine` to run multiple services (long running) concurrently.
+
+## How it works
+
+The main routine will start a goroutine for each service, and wait for all `goroutines` to finish.
+This mechanism allows the main routine to be able to stop all services when it receives a `SIGINT` signal.
+
+The implementation is based on channel and `select` statement.
+
+[X] Listen different Operating System (OS) signals
+[X] Stop all services when receiving OS
+[X] Support wait for all services to start and stop
 
 ## How to run
 
