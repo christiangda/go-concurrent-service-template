@@ -22,12 +22,14 @@ func NewServer3() *Server3 {
 
 func (s *Server3) Start() {
 	slog.Info("starting service...", "service", "3")
+
 	// simulate the provisioning of the service
+	slog.Info("waiting start...", "service", "3")
 	time.Sleep(time.Duration(rand.Intn(3)) * time.Second)
-	slog.Info("...service started", "service", "3")
 
 	// closing the channel will notify the server that the service is started
 	close(s.waitStartCh)
+	slog.Info("...service started", "service", "3")
 
 	// do something here for long running tasks
 	// like a gRPC server
@@ -43,10 +45,11 @@ func (s *Server3) Stop() {
 	slog.Warn("stopping services...", "service", "3")
 
 	// simulate the time spent to stop gracefully shutdown the service
+	slog.Info("waiting stop...", "service", "3")
 	time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
-	slog.Warn("...service stopped", "service", "3")
 
 	close(s.stopCh)
+	slog.Warn("...service stopped", "service", "3")
 }
 
 func (s *Server3) WaitStart() {
