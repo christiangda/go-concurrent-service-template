@@ -69,12 +69,14 @@ func Run() {
 	// start service 1 in a separate goroutine
 	go func() {
 		slog.Info("starting service...", "service", "1")
+
 		// simulate the provisioning of the service
+		slog.Info("waiting start...", "service", "1")
 		time.Sleep(time.Duration(rand.Intn(3)) * time.Second)
-		slog.Info("...service started", "service", "1")
 
 		// closing the channel will notify the server that the service is started
 		close(s1WaitStartCh)
+		slog.Info("...service started", "service", "1")
 
 		// do something here for long running tasks
 		// like a gRPC server
@@ -85,22 +87,25 @@ func Run() {
 		slog.Warn("stopping services...", "service", "1")
 
 		// simulate the time spent to stop gracefully shutdown the service
+		slog.Info("waiting stop...", "service", "1")
 		time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
-		slog.Warn("...service stopped", "service", "1")
 
 		// close the channel to notify the server that the service is stopped
 		close(s1WaitStopCh)
+		slog.Warn("...service stopped", "service", "1")
 	}()
 
 	// start service 2 in a separate goroutine
 	go func() {
 		slog.Info("starting service...", "service", "2")
+
 		// simulate the provisioning of the service
+		slog.Info("waiting start...", "service", "2")
 		time.Sleep(time.Duration(rand.Intn(3)) * time.Second)
-		slog.Info("...service started", "service", "2")
 
 		// closing the channel will notify the server that the service is started
 		close(s2WaitStartCh)
+		slog.Info("...service started", "service", "2")
 
 		// do something here for long running tasks
 		// like a http server
@@ -111,22 +116,25 @@ func Run() {
 		slog.Warn("stopping services...", "service", "2")
 
 		// simulate the time spent to stop gracefully shutdown the service
+		slog.Info("waiting stop...", "service", "2")
 		time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
-		slog.Warn("...service stopped", "service", "2")
 
 		// close the channel to notify the server that the service is stopped
 		close(s2WaitStopCh)
+		slog.Warn("...service stopped", "service", "2")
 	}()
 
 	// start service 3 in a separate goroutine
 	go func() {
 		slog.Info("starting service...", "service", "3")
+
 		// simulate the provisioning of the service
+		slog.Info("waiting start...", "service", "3")
 		time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
-		slog.Info("...service started", "service", "3")
 
 		// closing the channel will notify the server that the service is started
 		close(s3WaitStartCh)
+		slog.Info("...service started", "service", "3")
 
 		// do something here for long running tasks
 		// like a TCP server
@@ -137,11 +145,12 @@ func Run() {
 		slog.Warn("stopping services...", "service", "3")
 
 		// simulate the time spent to stop gracefully shutdown the service
+		slog.Info("waiting stop...", "service", "3")
 		time.Sleep(time.Duration(rand.Intn(2)) * time.Second)
-		slog.Warn("...service stopped", "service", "3")
 
 		// close the channel to notify the server that the service is stopped
 		close(s3WaitStopCh)
+		slog.Warn("...service stopped", "service", "3")
 	}()
 
 	// blocked main to wait until all services are started
