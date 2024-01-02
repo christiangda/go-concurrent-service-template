@@ -16,6 +16,14 @@ Run service by name
 go run main.go -run <service_name>
 ```
 
+Stop services
+
+Once the main routine is blocking, `press Ctrl+C`` to stop all services or in a different terminal, run
+
+```bash
+kill -SIGINT <pid>
+```
+
 ## build
 
 ```bash

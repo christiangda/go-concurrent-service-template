@@ -150,6 +150,8 @@ func Run() {
 	<-s3WaitStartCh
 	slog.Info("...server started")
 
+	slog.Info("to stop the server press CTRL+C")
+
 	// blocked main to wait for stop the server
 	<-serverStopCh
 

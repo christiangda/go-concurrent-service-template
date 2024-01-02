@@ -73,6 +73,8 @@ func Run() {
 	service3.WaitStart()
 	slog.Info("...server started")
 
+	slog.Info("to stop the server press CTRL+C")
+
 	// blocked main to wait for stop the server
 	<-serverStopCh
 
