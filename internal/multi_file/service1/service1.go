@@ -37,19 +37,18 @@ func (s *Server1) Start() {
 	// blocked to wait until channel is closed to stop the service
 	<-s.stopCh
 
+	// simulate the time spent to stop gracefully shutdown the service
+	slog.Info("waiting stop...", "service", "1")
+	time.Sleep(time.Duration(rand.Intn(2)) * time.Second)
+
 	// close the channel to notify the server that the service is stopped
 	close(s.waitStopCh)
+	slog.Warn("...service stopped", "service", "1")
 }
 
 func (s *Server1) Stop() {
 	slog.Warn("stopping services...", "service", "1")
-
-	slog.Info("waiting stop...", "service", "1")
-	// simulate the time spent to stop gracefully shutdown the service
-	time.Sleep(time.Duration(rand.Intn(4)) * time.Second)
-
 	close(s.stopCh)
-	slog.Warn("...service stopped", "service", "1")
 }
 
 func (s *Server1) WaitStart() {

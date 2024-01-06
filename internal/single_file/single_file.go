@@ -169,10 +169,10 @@ func Run() {
 	// in a different goroutine was started before
 	<-serverStopCh
 
-	// notify the services to stop
-	close(s1StopCh)
-	close(s2StopCh)
-	close(s3StopCh)
+	// notify the services to stop asynchronously
+	go close(s1StopCh)
+	go close(s2StopCh)
+	go close(s3StopCh)
 
 	// blocked main to wait for stop each service
 	// the channels are closed when the services are stopped

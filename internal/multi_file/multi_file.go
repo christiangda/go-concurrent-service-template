@@ -48,7 +48,8 @@ func Run() {
 				}
 
 			// if the stopCh channel is closed, the server is stopped
-			// exit from the goroutine
+			// exit from the goroutine. A closed channel always return a zero value
+			// and could be read without blocking
 			case <-serverStopCh:
 				return
 			}
@@ -73,12 +74,12 @@ func Run() {
 	service3.WaitStart()
 	slog.Info("...server started")
 
-	slog.Info("to stop the server press CTRL+C")
+	slog.Warn("-> to stop the server press `CTRL+C`")
 
 	// blocked main to wait for stop the server
 	<-serverStopCh
 
-	// notify the services to stop
+	// notify the services to stop asynchronously
 	go service1.Stop()
 	go service2.Stop()
 	go service3.Stop()
