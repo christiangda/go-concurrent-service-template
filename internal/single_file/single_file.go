@@ -59,7 +59,8 @@ func Run() {
 				}
 
 			// if the stopCh channel is closed, the server is stopped
-			// exit from the goroutine
+			// exit from the goroutine. A closed channel always return a zero value
+			// and could be read without blocking
 			case <-serverStopCh:
 				return
 			}
@@ -154,22 +155,29 @@ func Run() {
 	}()
 
 	// blocked main to wait until all services are started
+	// in the order s1, s2, s3 because these are blocking in that order
+	// the main goroutine
 	<-s1WaitStartCh
 	<-s2WaitStartCh
 	<-s3WaitStartCh
 	slog.Info("...server started")
 
-	slog.Info("to stop the server press CTRL+C")
+	slog.Warn("-> to stop the server press `CTRL+C`")
 
 	// blocked main to wait for stop the server
+	// the serverStopCh channel is closed when a signal is received
+	// in a different goroutine was started before
 	<-serverStopCh
 
 	// notify the services to stop
-	go close(s1StopCh)
-	go close(s2StopCh)
-	go close(s3StopCh)
+	close(s1StopCh)
+	close(s2StopCh)
+	close(s3StopCh)
 
 	// blocked main to wait for stop each service
+	// the channels are closed when the services are stopped
+	// in a different goroutine was started before
+	// the wait is in the order s1,s2,s3 because these are blocking in that order
 	<-s1WaitStopCh
 	<-s2WaitStopCh
 	<-s3WaitStopCh
